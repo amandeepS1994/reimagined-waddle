@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -74,4 +75,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
         return converter;
     }
 
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension () {
+        return new SecurityEvaluationContextExtension();
+    }
 }
