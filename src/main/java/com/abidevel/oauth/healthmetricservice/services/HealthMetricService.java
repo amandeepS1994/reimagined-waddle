@@ -1,6 +1,7 @@
 package com.abidevel.oauth.healthmetricservice.services;
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,8 @@ public class HealthMetricService {
     this.healthProfileRepository = healthProfileRepository;
   }
 
+  // If is current user.
+  @PreAuthorize("#healthMetric.profile.username == authentication.principal.claims['user_name']")
   public void addHealthMetric(HealthMetric healthMetric) {
     Optional<HealthProfile> profile = healthProfileRepository.findHealthProfileByUsername(healthMetric.getProfile().getUsername());
 
@@ -45,6 +48,7 @@ public class HealthMetricService {
     return healthMetricRepository.findHealthMetricHistory(username);
   }
 
+  @PreAuthorize("hasAuthority('admin')")
   public void deleteHealthMetricForUser(String username) {
     Optional<HealthProfile> profile = healthProfileRepository.findHealthProfileByUsername(username);
 

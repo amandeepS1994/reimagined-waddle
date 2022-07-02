@@ -1,6 +1,8 @@
 package com.abidevel.oauth.healthmetricservice.services;
 
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ public class HealthProfileService {
     this.healthProfileRepository = healthProfileRepository;
   }
 
+  // If  the profile is the current logged user.
+  @PreAuthorize("#profile.username == authentication.principal.claims['user_name']")
   public void addHealthProfile(HealthProfile profile) {
     Optional<HealthProfile> healthProfile = healthProfileRepository.findHealthProfileByUsername(profile.getUsername());
 
@@ -31,6 +35,8 @@ public class HealthProfileService {
     }
   }
 
+  // if the username is the logged user or has admin authority.
+  @PostAuthorize("returnObject.username == authentication.principal.claims['user_name'] or hasAuthority('admin')")
   public HealthProfile findHealthProfile(String username) {
     Optional<HealthProfile> healthProfile =
             healthProfileRepository.findHealthProfileByUsername(username);
@@ -39,6 +45,7 @@ public class HealthProfileService {
             .orElseThrow(() -> new NonExistentHealthProfileException("No profile found for the provided username."));
   }
 
+  @PreAuthorize("hasAuthority('admin')")
   public void deleteHealthProfile(String username) {
     Optional<HealthProfile> healthProfile =
             healthProfileRepository.findHealthProfileByUsername(username);
